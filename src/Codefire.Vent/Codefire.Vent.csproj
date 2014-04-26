@@ -39,8 +39,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builders\TimerMetricBuilder.cs" />
+    <Compile Include="Builders\GaugeMetricBuilder.cs" />
+    <Compile Include="Builders\EventBaseBuilder.cs" />
+    <Compile Include="Builders\EventBuilder.cs" />
+    <Compile Include="Builders\ExceptionBuilder.cs" />
+    <Compile Include="Builders\IMessageBuilder.cs" />
+    <Compile Include="Builders\MessageBuilder.cs" />
+    <Compile Include="Builders\CounterMetricBuilder.cs" />
+    <Compile Include="EventMessageFactory.cs" />
+    <Compile Include="ExceptionExtension.cs" />
+    <Compile Include="IMessageLogger.cs" />
+    <Compile Include="ITarget.cs" />
+    <Compile Include="MessageLogger.cs" />
+    <Compile Include="MetricMessageFactory.cs" />
+    <Compile Include="Models\EventBaseData.cs" />
+    <Compile Include="Models\EventData.cs" />
+    <Compile Include="Models\ExceptionData.cs" />
+    <Compile Include="Models\ExceptionDetailData.cs" />
+    <Compile Include="Models\LogLevel.cs" />
+    <Compile Include="Models\MessageType.cs" />
+    <Compile Include="Models\MetricData.cs" />
+    <Compile Include="Models\StackTraceData.cs" />
+    <Compile Include="Models\VentMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Targets\Target.cs" />
+    <Compile Include="VentLog.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
