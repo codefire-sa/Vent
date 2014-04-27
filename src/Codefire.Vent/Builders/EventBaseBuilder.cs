@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Codefire.Vent.Models;
 
 namespace Codefire.Vent.Builders
@@ -6,58 +7,61 @@ namespace Codefire.Vent.Builders
     public abstract class EventBaseBuilder<TBuilder> : MessageBuilder<TBuilder>
         where TBuilder : class, IMessageBuilder
     {
-        protected EventBaseBuilder(IMessageLogger logger, VentMessage msg)
+        protected EventBaseBuilder(IVentLog logger, VentMessage msg)
             : base(logger, msg)
         {
+            if (logger.Configuration.MachineNameProvider != null)
+            {
+                MachineName(logger.Configuration.MachineNameProvider());
+            }
+
+            if (logger.Configuration.UserNameProvider != null)
+            {
+                UserName(logger.Configuration.UserNameProvider());
+            }
+
+            if (logger.Configuration.VersionProvider != null)
+            {
+                Version(logger.Configuration.VersionProvider());
+            }
         }
 
-        public TBuilder Level(string value)
+        public TBuilder MachineName(string value)
         {
-            return Assign<EventData>(data => data.Level = value);
+            return Assign(data => data.MachineName = value);
         }
 
-        public TBuilder Message(string value)
+        public TBuilder UserName(string value)
         {
-            return Assign<EventData>(data => data.Message = value);
-        }
-
-        public TBuilder MessageFormat(string format, params object[] args)
-        {
-            var value = string.Format(format, args);
-
-            return Assign<EventData>(data => data.Message = value);
-        }
-
-        public TBuilder MessageFormat(IFormatProvider provider, string format, params object[] args)
-        {
-            var value = string.Format(provider, format, args);
-
-            return Assign<EventData>(data => data.Message = value);
-        }
-
-        public TBuilder Host(string value)
-        {
-            return Assign<EventBaseData>(data => data.HostName = value);
-        }
-
-        public TBuilder User(string value)
-        {
-            return Assign<EventBaseData>(data => data.UserName = value);
+            return Assign(data => data.UserName = value);
         }
 
         public TBuilder Version(string value)
         {
-            return Assign<EventBaseData>(data => data.Version = value);
+            return Assign(data => data.Version = value);
         }
 
-        public TBuilder AddData(string name, object value)
+        public TBuilder AddData(string name, string value)
         {
-            return Assign<EventBaseData>(data => data.Data.Add(name, value));
+            return Assign(data =>
+            {
+                if (data.Data == null)
+                    data.Data = new Dictionary<string, string>();
+                
+                data.Data.Add(name, value);
+            });
         }
 
         public TBuilder AddTags(params string[] tags)
         {
-            return Assign<EventBaseData>(data => Array.ForEach(tags, item => data.Tags.Add(item)));
+            return Assign(data =>
+            {
+                if (data.Tags == null)
+                    data.Tags = new List<string>();
+
+
+                Array.ForEach(tags, item => data.Tags.Add(item));
+            });
         }
     }
 }

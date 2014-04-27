@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Codefire.Vent.Models;
 
 namespace Codefire.Vent.Builders
@@ -6,13 +7,15 @@ namespace Codefire.Vent.Builders
     public abstract class MessageBuilder<TBuilder> : IMessageBuilder
         where TBuilder : class, IMessageBuilder
     {
-        protected MessageBuilder(IMessageLogger logger, VentMessage msg)
+        protected MessageBuilder(IVentLog logger, VentMessage msg)
         {
+            msg.Source = logger.Configuration.Source;
+
             Logger = logger;
             InnerMessage = msg;
         }
 
-        public IMessageLogger Logger { get; private set; }
+        public IVentLog Logger { get; private set; }
         public VentMessage InnerMessage { get; private set; }
 
         public TBuilder Source(string value)
@@ -36,11 +39,9 @@ namespace Codefire.Vent.Builders
             return this as TBuilder;
         }
 
-        protected TBuilder Assign<TData>(Action<TData> action)
+        public TBuilder Assign(Action<dynamic> action)
         {
-            var data = (TData)InnerMessage.MessageData;
-
-            action(data);
+            action(InnerMessage.MessageData);
 
             return this as TBuilder;
         }
@@ -48,6 +49,11 @@ namespace Codefire.Vent.Builders
         public virtual void Publish()
         {
             Logger.Publish(InnerMessage);
+        }
+
+        public virtual Task PublishAsync()
+        {
+            return Logger.PublishAsync(InnerMessage);
         }
     }
 }

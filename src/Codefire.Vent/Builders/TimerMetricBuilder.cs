@@ -6,7 +6,7 @@ namespace Codefire.Vent.Builders
 {
     public class TimerMetricBuilder : MessageBuilder<TimerMetricBuilder>
     {
-        public TimerMetricBuilder(IMessageLogger logger, VentMessage msg)
+        public TimerMetricBuilder(IVentLog logger, VentMessage msg)
             : base(logger, msg)
         {
         }
@@ -21,7 +21,7 @@ namespace Codefire.Vent.Builders
             finally
             {
                 stopwatch.Stop();
-                Assign<MetricData>(data => data.Value = Convert.ToDouble(stopwatch.ElapsedMilliseconds));
+                Assign(data => data.Value = Convert.ToDouble(stopwatch.ElapsedMilliseconds));
             }
 
             return this;
@@ -29,7 +29,7 @@ namespace Codefire.Vent.Builders
 
         public TimerMetricBuilder Value(double value)
         {
-            return Assign<MetricData>(data => data.Value = value);
+            return Assign(data => data.Value = value);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Dynamic;
 
 namespace Codefire.Vent.Models
 {
@@ -7,12 +8,13 @@ namespace Codefire.Vent.Models
         public VentMessage()
         {
             Timestamp = DateTime.Now;
+            MessageData = new ExpandoObject();
         }
 
         public string Source { get; set; }
         public string Name { get; set; }
         public string MessageType { get; set; }
         public DateTime Timestamp { get; set; }
-        public object MessageData { get; set; }
+        public dynamic MessageData { get; set; }
     }
 }

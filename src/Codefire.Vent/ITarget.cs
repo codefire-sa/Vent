@@ -1,4 +1,5 @@
-﻿using Codefire.Vent.Models;
+﻿using System.Threading.Tasks;
+using Codefire.Vent.Models;
 
 namespace Codefire.Vent
 {
@@ -9,5 +10,6 @@ namespace Codefire.Vent
         void Start();
         void Stop();
         void Process(VentMessage message);
+        Task ProcessAsync(VentMessage message);
     }
 }

@@ -1,36 +1,85 @@
-﻿namespace Codefire.Vent
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Codefire.Vent.Models;
+
+namespace Codefire.Vent
 {
-    public static class VentLog
+    public class VentLog : IVentLog, IDisposable
     {
-        private static IMessageLogger _logger;
-        private static readonly EventMessageFactory _events;
-        private static readonly MetricMessageFactory _metrics;
+        private readonly List<ITarget> _targets;
+        private bool _disposed;
 
-        static VentLog()
+        public VentLog()
         {
-            _logger = new MessageLogger();
-            _events = new EventMessageFactory(_logger);
-            _metrics = new MetricMessageFactory(_logger);
+            Configuration = new VentConfiguration();
+            _targets = new List<ITarget>();
         }
 
-        public static IMessageLogger Logger
+        public IVentConfiguration Configuration { get; set; }
+
+        public ITarget[] Targets
         {
-            get { return _logger; }
+            get { return _targets.ToArray(); }
         }
 
-        public static void SetLogger(IMessageLogger logger)
+        public void AddTarget(ITarget target)
         {
-            _logger = logger;
+            target.Start();
+
+            _targets.Add(target);
         }
 
-        public static EventMessageFactory Events
-        { 
-            get { return _events; }
+        public void RemoveTarget(string name)
+        {
+            _targets.RemoveAll(item =>
+            {
+                if (item.Name != name) return false;
+
+                item.Stop();
+                return true;
+            });
         }
 
-        public static MetricMessageFactory Metrics
+        public void RemoveAllTargets()
         {
-            get { return _metrics; }
+            _targets.RemoveAll(item =>
+            {
+                item.Stop();
+                return true;
+            });
+        }
+
+        public void Publish(VentMessage message)
+        {
+            _targets.ForEach(item => item.Process(message));
+        }
+
+        public async Task PublishAsync(VentMessage message)
+        {
+            foreach (var item in _targets)
+            {
+                await item.ProcessAsync(message);
+            }
+        }
+        
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    RemoveAllTargets();
+                }
+
+                _disposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

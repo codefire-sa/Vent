@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Diagnostics;
 using Codefire.Vent.Builders;
 using Codefire.Vent.Models;
 
-namespace Codefire.Vent
+namespace Codefire.Vent.Factories
 {
     public class MetricMessageFactory
     {
-        private readonly IMessageLogger _logger;
+        private readonly IVentLog _logger;
 
-        public MetricMessageFactory(IMessageLogger logger)
+        public MetricMessageFactory(IVentLog logger)
         {
             _logger = logger;
         }
@@ -39,10 +38,8 @@ namespace Codefire.Vent
         {
             var metricMsg = new VentMessage
             {
-                Source = _logger.Source,
                 Name = name,
                 MessageType = type,
-                MessageData = new MetricData(),
                 Timestamp = DateTime.Now
             };
 

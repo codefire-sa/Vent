@@ -1,15 +1,17 @@
-﻿using Codefire.Vent.Models;
+﻿using System.Threading.Tasks;
+using Codefire.Vent.Models;
 
 namespace Codefire.Vent
 {
-    public interface IMessageLogger
+    public interface IVentLog
     {
-        string Source { get; set; }
+        IVentConfiguration Configuration { get; set; }
         ITarget[] Targets { get; }
 
         void AddTarget(ITarget target);
         void RemoveTarget(string name);
         void RemoveAllTargets();
         void Publish(VentMessage message);
+        Task PublishAsync(VentMessage message);
     }
 }
